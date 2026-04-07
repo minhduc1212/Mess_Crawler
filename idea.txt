@@ -1,0 +1,4 @@
+await page.mouse.move(500, 400)
+await page.mouse.wheel(0, -5000)
+
+#tin nhắn bị loạn, lặp, không có hình ảnh, video
