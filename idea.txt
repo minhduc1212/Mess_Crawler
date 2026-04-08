@@ -1,4 +1,9 @@
 await page.mouse.move(500, 400)
 await page.mouse.wheel(0, -5000)
 
-#tin nhắn bị loạn, lặp, không có hình ảnh, video
+tin nhắn bị loạn, lặp, không có hình ảnh, video 
+-> tin nhắn cứ lấy hết đi và sắp xếp lại sau nhưng trg hợp nhiều tin nhắn cùng nội dung mà cùng trong 1 phút đó thì làm như nào
+
+khi bị thừa số lần cuộn -> bị lặp tin nhắn 
+
+:V chuyển sang chụp ảnh màn hình
