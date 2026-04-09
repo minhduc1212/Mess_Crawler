@@ -7,3 +7,16 @@ tin nhắn bị loạn, lặp, không có hình ảnh, video
 khi bị thừa số lần cuộn -> bị lặp tin nhắn 
 
 :V chuyển sang chụp ảnh màn hình
+
+https://www.facebook.com/share/p/1AXVrtgXjv/
+https://www.facebook.com/groups/sportsbook4vn/permalink/983212847896221/
+=> caption chung: /html/body/div[1]/div/div[1]/div/div[5]/div/div/div[2]/div/div/div/div/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div/div/div/div/div/div[13]/div/div/div[3]/div[1]/div/div/div/div/span/div
+
+https://www.facebook.com/photo?fbid=1681729553186311&set=pcb.983212847896221
+=> caption riêng: /html/body/div[1]/div/div[1]/div/div[3]/div/div/div[1]/div[1]/div/div[2]/div/div[1]/div/div[1]/div[2]/div[1]/div[2]/span
+
+click vào ảnh: 
+
+Nhiều ảnh:/html/body/div[1]/div/div[1]/div/div[5]/div/div/div[2]/div/div/div/div/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div/div/div/div/div/div[13]/div/div/div[3]/div[2]/div[1]/div/div/div/div[1]/a/div[1]/div[1]/div/img
+
+1 ảnh: /html/body/div[1]/div/div[1]/div/div[5]/div/div/div[2]/div/div/div/div/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div/div/div/div/div/div[13]/div/div/div[3]/div[2]/div[1]/a/div[1]/div/div/div/img
