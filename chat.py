@@ -33,7 +33,7 @@ async def main():
         page = context.pages[0] if context.pages else await context.new_page()
         print(f"navigator.webdriver = {await page.evaluate('navigator.webdriver')}")
 
-        await page.goto("https://www.facebook.com/messages/e2ee/t/849603334553929")
+        await page.goto("https://www.facebook.com/messages/e2ee/t/6034748446650190")
         print("─" * 55)
         print("Nếu lần đầu → đăng nhập thủ công rồi nhấn Enter.")
         print("─" * 55)

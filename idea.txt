@@ -15,8 +15,37 @@ https://www.facebook.com/groups/sportsbook4vn/permalink/983212847896221/
 https://www.facebook.com/photo?fbid=1681729553186311&set=pcb.983212847896221
 => caption riêng: /html/body/div[1]/div/div[1]/div/div[3]/div/div/div[1]/div[1]/div/div[2]/div/div[1]/div/div[1]/div[2]/div[1]/div[2]/span
 
+lấy caption chung:XPath-> Parse JSON từ <script> tags trong HTML tĩnh -> Regex trực tiếp trên HTML thô -> Duyệt XHR responses đã bắt được
+
 click vào ảnh: 
 
-Nhiều ảnh:/html/body/div[1]/div/div[1]/div/div[5]/div/div/div[2]/div/div/div/div/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div/div/div/div/div/div[13]/div/div/div[3]/div[2]/div[1]/div/div/div/div[1]/a/div[1]/div[1]/div/img
+    nếu là nhiều ảnh:/html/body/div[1]/div/div[1]/div/div[5]/div/div/div[2]/div/div/div/div/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div/div/div/div/div/div[13]/div/div/div[3]/div[2]/div[1]/div/div/div/div[1]/a/div[1]/div[1]/div/img
 
-1 ảnh: /html/body/div[1]/div/div[1]/div/div[5]/div/div/div[2]/div/div/div/div/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div/div/div/div/div/div[13]/div/div/div[3]/div[2]/div[1]/a/div[1]/div/div/div/img
+    nếu là 1 ảnh: /html/body/div[1]/div/div[1]/div/div[5]/div/div/div[2]/div/div/div/div/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div/div/div/div/div/div[13]/div/div/div[3]/div[2]/div[1]/a/div[1]/div/div/div/img
+
+is_carousel_post()?
+├── True  → crawl_carousel_images()  — duyệt từng slide
+└── False → lấy từ result["images"]  — đã có từ parse HTML
+
+
+1 ảnh
+    post_images  ← large_media_preview_image, photo_image
+                    (chỉ xuất hiện trong attachment của post)
+
+    other_images ← image, preferred_image, full_picture  
+                    (có thể là avatar, thumbnail, hoặc ảnh post)
+nhiều ảnh
+    crawl_carousel_images():
+    │
+    ├── Slide 0 (đã load sẵn)
+    │   ├── get_visible_image_url()     — lấy URL ảnh đang hiển thị
+    │   └── get_caption_by_matching_url() — tìm caption khớp URL
+    │
+    └── Slide 1..N (click Next lần lượt)
+        ├── click_next_button()         — click nút → ảnh mới render
+        ├── asyncio.sleep(1.5)          — chờ XHR mới load
+        ├── get_visible_image_url()     — lấy URL ảnh mới
+        └── get_caption_by_matching_url() — tìm caption khớp URL mới
+    lấy caption từng ảnh:   TARGET_XPATH = "/html/body/div[1]/div/div[1]/div/div[3]/..."
+                            locator = page.locator(f"xpath={TARGET_XPATH}").first
+                            raw_text = await locator.inner_text(
