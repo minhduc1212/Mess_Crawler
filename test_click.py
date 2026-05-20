@@ -17,7 +17,7 @@ async def test_click_xpath():
         print("[*] Đang khởi động trình duyệt...")
         context = await p.chromium.launch_persistent_context(
             user_data_dir=user_data_dir,
-            headless=True, # Mở giao diện lên để quan sát
+            headless=False, # Mở giao diện lên để quan sát
             viewport={"width": 1280, "height": 720},
             args=["--lang=vi-VN,vi"],
         )

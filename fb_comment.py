@@ -1,11 +1,16 @@
 #use for first time to set up cookie and profile for playwright
 import os
 import asyncio
-import os
 import io
 from playwright.async_api import async_playwright
 from playwright_stealth import Stealth
 import json
+import sys
+
+# Configure UTF-8 encoding for standard outputs
+sys.stdout.reconfigure(encoding='utf-8')
+sys.stderr.reconfigure(encoding='utf-8')
+
 
 async def scrape_facebook_comments(page):
     print("Đang tìm kiếm bình luận...")
@@ -28,7 +33,7 @@ async def scrape_facebook_comments(page):
         await page.keyboard.press("End")
         
         # Tạm dừng 2.5 giây để Facebook call API và render giao diện
-        await page.wait_for_timeout(2500)
+        await page.wait_for_timeout(5000)
         
         # Đếm số lượng bình luận hiện có trên màn hình
         current_count = await comment_locator.count()
@@ -53,8 +58,12 @@ async def scrape_facebook_comments(page):
 
     results = []
 
-    for link_element in comment_links:
+    for index, link_element in enumerate(comment_links):
         try:
+            # Progress logging
+            if (index + 1) % 10 == 0 or index == 0 or index == len(comment_links) - 1:
+                print(f"Đang xử lý bình luận {index + 1}/{len(comment_links)}...")
+
             raw_link = await link_element.get_attribute('href', timeout=1000)
             if not raw_link:
                 continue 
@@ -82,10 +91,70 @@ async def scrape_facebook_comments(page):
             else:
                 comment_text = "[Chỉ có ảnh/Sticker hoặc không tìm thấy]"
 
+            # LẤY THỜI GIAN CHI TIẾT
+            detailed_time = ""
+            try:
+                article_container = link_element.locator('xpath=ancestor::div[@role="article"]').first
+                all_links = article_container.locator('a[href*="comment_id"]')
+                link_count = await all_links.count()
+                
+                timestamp_el = None
+                relative_time = ""
+                
+                for idx in range(link_count):
+                    el = all_links.nth(idx)
+                    el_text = await el.text_content(timeout=1000)
+                    el_text = el_text.strip() if el_text else ""
+                    
+                    # Process of elimination: timestamp link is non-empty and is not the author's name link
+                    if el_text and el_text != name:
+                        timestamp_el = el
+                        relative_time = el_text
+                        break
+                
+                if timestamp_el:
+                    detailed_time = relative_time  # Fallback to relative time
+                    
+                    try:
+                        # Clear any existing tooltip by moving mouse away
+                        await page.mouse.move(0, 0)
+                        try:
+                            # Wait briefly for previous tooltip to be hidden
+                            await page.wait_for_selector('div[role="tooltip"]', state="hidden", timeout=300)
+                        except Exception:
+                            pass
+                            
+                        # Hover over the timestamp element to trigger the tooltip
+                        await timestamp_el.scroll_into_view_if_needed(timeout=2000)
+                        await asyncio.sleep(0.3)  # Let UI settle after scroll
+                        await timestamp_el.hover(timeout=3000)
+                        
+                        # Wait for the tooltip to become visible (up to 3s)
+                        try:
+                            await page.wait_for_selector('div[role="tooltip"]', state="visible", timeout=3000)
+                            tooltip = page.locator('div[role="tooltip"]')
+                            if await tooltip.count() > 0:
+                                tooltip_text = await tooltip.first.text_content(timeout=500)
+                                if tooltip_text:
+                                    detailed_time = tooltip_text.strip()
+                                    # Optimization: Proceed immediately after success
+                                    await page.mouse.move(0, 0)
+                                    # No extra sleep needed here
+                        except Exception:
+                            # Tooltip failed to appear in 3s, keep relative time fallback
+                            pass
+                    except Exception:
+                        # Fallback silently and keep the relative time
+                        pass
+            except Exception as e:
+                # We don't want to spam errors for every comment if extraction fails
+                pass
+
             # Thêm vào kết quả
             results.append({
                 "user": name,
                 "link": profile_link,
+                "time": detailed_time,
                 "content": comment_text
             })
 
@@ -101,6 +170,7 @@ async def scrape_facebook_comments(page):
     for r in results:
         print(f"Tên: {r['user']}")
         print(f"Link: {r['link']}")
+        print(f"Thời gian: {r['time']}")
         print(f"Nội dung: {r['content']}")
         print("-" * 40)
 

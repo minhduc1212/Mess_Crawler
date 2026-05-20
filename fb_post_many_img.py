@@ -739,5 +739,5 @@ async def crawl_fb_post(url: str):
 
 if __name__ == "__main__":
     asyncio.run(crawl_fb_post(
-        "https://www.facebook.com/UrbanHermitOG/posts/pfbid033fBsWQ28zeAJjACcnuE1CawLFsKYwPG8DPqSk3VCRbXTGTN5h9tTbJoinf75jBzbl"
+        "https://www.facebook.com/photo?fbid=3357352571094666&set=pcb.1345769944078750"
     ))
