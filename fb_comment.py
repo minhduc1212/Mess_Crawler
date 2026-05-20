@@ -57,6 +57,7 @@ async def scrape_facebook_comments(page):
     print(f"Tìm thấy {len(comment_links)} thẻ link bình luận tiềm năng.")
 
     results = []
+    seen_keys = {}  # key=(user, link, content) -> index in results
 
     for index, link_element in enumerate(comment_links):
         try:
@@ -150,7 +151,16 @@ async def scrape_facebook_comments(page):
                 # We don't want to spam errors for every comment if extraction fails
                 pass
 
-            # Thêm vào kết quả
+            # Kiểm tra trùng lặp trước khi thêm
+            dedup_key = (name, profile_link, comment_text)
+            if dedup_key in seen_keys:
+                # Nếu bản cũ chưa có thời gian chi tiết mà bản mới có -> cập nhật
+                existing_idx = seen_keys[dedup_key]
+                if 'lúc' not in results[existing_idx]['time'] and 'lúc' in detailed_time:
+                    results[existing_idx]['time'] = detailed_time
+                continue
+
+            seen_keys[dedup_key] = len(results)
             results.append({
                 "user": name,
                 "link": profile_link,
