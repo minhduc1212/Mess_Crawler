@@ -49,3 +49,6 @@ nhiều ảnh
     lấy caption từng ảnh:   TARGET_XPATH = "/html/body/div[1]/div/div[1]/div/div[3]/..."
                             locator = page.locator(f"xpath={TARGET_XPATH}").first
                             raw_text = await locator.inner_text(
+
+
+get small comment in big comment
